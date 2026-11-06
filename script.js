@@ -93,6 +93,7 @@ const projects = [
     description: "An attendance system built for the Web and Mobile Systems course.",
     tech: ["HTML"],
     link: "", // private repo
+    media: ["media/attendify/demo.mp4"],
   },
   {
     name: "GadgetLoop",
@@ -142,18 +143,6 @@ const projects = [
       "media/idol-camera/2-countdown.webp",
       "media/idol-camera/3-result.webp",
     ],
-  },
-  {
-    name: "Taskify",
-    color: "#B19581",
-    year: "2026",
-    type: "Python Tool",
-    description:
-      "An inbox-to-task tool for students. It reads university email announcements, " +
-      "filters them by custom keywords, flags urgent items like exams, and exports a " +
-      "to-do dashboard (todo.txt) and a spreadsheet (todo.csv).",
-    tech: ["Python", "CSV"],
-    link: "https://github.com/WeiWei992/Taskify",
   },
   {
     name: "Kohi Coffee",

@@ -2,6 +2,13 @@
 // Add, remove or edit projects here. Each one becomes a folder on the Projects page.
 // color: pick one of the palette colours (hex code).
 // link: put "" if you don't have a link.
+// media (optional): images and videos shown in the popup, first one shows first.
+//   Put the files in a folder such as media/rmconvert/, then list them like this:
+//   media: [
+//     "media/rmconvert/home.webp",          // image: .webp .png .jpg .gif
+//     "media/rmconvert/demo.mp4",           // video: .mp4 or .webm
+//     "https://youtu.be/VIDEO_ID",          // YouTube link
+//   ],
 const projects = [
   {
     name: "RMConvert",
@@ -14,6 +21,7 @@ const projects = [
       "refund calculator.",
     tech: ["Kotlin", "Jetpack Compose", "BNM API"],
     link: "https://github.com/WeiWei992/RMConvert",
+    media: ["media/rmconvert/demo.mp4"],
   },
   {
     name: "Smart Grocery App",
@@ -27,6 +35,29 @@ const projects = [
       "Firebase Authentication.",
     tech: ["Flutter", "Dart", "Firebase", "SQLite"],
     link: "https://github.com/elishadowww/Government-Smart-Grocery-App",
+    media: [
+      "media/smart-grocery/01-welcome.webp",
+      "media/smart-grocery/02-start.webp",
+      "media/smart-grocery/03-login.webp",
+      "media/smart-grocery/04-register.webp",
+      "media/smart-grocery/05-forgot-password.webp",
+      "media/smart-grocery/06-dashboard.webp",
+      "media/smart-grocery/07-menu.webp",
+      "media/smart-grocery/08-search.webp",
+      "media/smart-grocery/09-filter.webp",
+      "media/smart-grocery/10-product.webp",
+      "media/smart-grocery/11-shopping-list.webp",
+      "media/smart-grocery/12-nearby-stores.webp",
+      "media/smart-grocery/13-price-trends.webp",
+      "media/smart-grocery/14-budget.webp",
+      "media/smart-grocery/15-notifications.webp",
+      "media/smart-grocery/16-saved.webp",
+      "media/smart-grocery/17-profile.webp",
+      "media/smart-grocery/18-language.webp",
+      "media/smart-grocery/19-about.webp",
+      "media/smart-grocery/20-guest-menu.webp",
+      "media/smart-grocery/21-login-required.webp",
+    ],
   },
   {
     name: "GymSense",
@@ -40,6 +71,7 @@ const projects = [
       "which shows it on a web dashboard.",
     tech: ["ESP32", "Arduino", "Node.js", "Express", "JavaScript"],
     link: "https://github.com/TARUMT-Cuties/BAIT2123-Internet-of-Things-GymSense-Gym-System",
+    media: ["media/gymsense/demo.mp4"],
   },
   {
     name: "Student Performance AI",
@@ -74,6 +106,12 @@ const projects = [
       "products, orders and members, with sales charts on the dashboard.",
     tech: ["PHP", "MySQL", "JavaScript", "CSS", "PHPMailer", "XAMPP"],
     link: "https://github.com/elishadowww/GadjetLoop",
+    media: [
+      "media/gadgetloop/1-home.webp",
+      "media/gadgetloop/2-products.webp",
+      "media/gadgetloop/3-about.webp",
+      "media/gadgetloop/4-contact.webp",
+    ],
   },
   {
     name: "MindfulFlow",
@@ -86,6 +124,7 @@ const projects = [
       "stay focused without burning out. Supports UN SDG 3 (Good Health and Well-being).",
     tech: ["HTML", "CSS", "JavaScript", "Python"],
     link: "https://github.com/WeiWei992/MindfulFlow",
+    media: ["https://www.youtube.com/watch?v=2rgfBJXVVc8"],
   },
   {
     name: "Idol Camera",
@@ -98,6 +137,11 @@ const projects = [
       "is processed on your device, so no images are uploaded.",
     tech: ["HTML", "CSS", "JavaScript", "Camera API"],
     link: "https://github.com/WeiWei992/idol-camera",
+    media: [
+      "media/idol-camera/1-start.webp",
+      "media/idol-camera/2-countdown.webp",
+      "media/idol-camera/3-result.webp",
+    ],
   },
   {
     name: "Taskify",
@@ -121,6 +165,7 @@ const projects = [
       "management and a simple checkout, designed to be mobile-friendly on all devices.",
     tech: ["HTML", "CSS", "JavaScript"],
     link: "https://github.com/WeiWei992/Kohi-Coffee-",
+    media: ["media/kohi-coffee/demo.mp4"],
   },
   {
     name: "Sabah Stay",
@@ -129,7 +174,7 @@ const projects = [
     type: "Mobile App",
     description: "A hotel booking app for stays in Sabah.",
     tech: [],
-    link: "https://github.com/WeiWei992/Sabah-Stay-Hotel-Booking-App-",
+    link: "https://github.com/TARUMT-Cuties/AMIT2053-Mobile-Application-and-Development-Sabah-Stay-Hotel-System",
   },
   {
     name: "May Salon",
@@ -153,6 +198,7 @@ const projects = [
       "subtotal, sales tax, total and change, and generates sales reports.",
     tech: ["C++", "Visual Studio 2019"],
     link: "https://github.com/WeiWei992/HS-Restaurant",
+    media: ["media/hs-restaurant/demo.mp4"],
   },
   {
     name: "MyBio Website",
@@ -308,6 +354,113 @@ projects.forEach((project, index) => {
 const modal = document.getElementById("modal");
 const modalCard = modal.querySelector(".modal-card");
 const modalLink = document.getElementById("modal-link");
+const mediaBox = document.getElementById("modal-media");
+const mediaViewer = document.getElementById("media-viewer");
+const mediaThumbs = document.getElementById("media-thumbs");
+let currentMedia = [];
+let currentMediaIndex = 0;
+
+function getYouTubeId(src) {
+  const match = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
+function isVideoFile(src) {
+  return /\.(mp4|webm)$/i.test(src);
+}
+
+// Portrait items (like phone screenshots) get a taller viewer so they aren't tiny
+function fitTallMedia(element, width, height) {
+  if (!mediaViewer.contains(element)) return;
+  mediaViewer.classList.toggle("is-tall", height > width);
+  // Very long images (full-page screenshots) scroll inside the viewer instead of shrinking
+  mediaViewer.classList.toggle("is-long", element.tagName === "IMG" && height > width * 2);
+  mediaViewer.scrollTop = 0;
+}
+
+// Show one image or video in the big viewer
+function showMedia(index) {
+  currentMediaIndex = index;
+  const src = currentMedia[index];
+  const youTubeId = getYouTubeId(src);
+  mediaViewer.innerHTML = ""; // also stops whatever was playing
+  mediaViewer.classList.remove("is-tall", "is-long");
+
+  if (youTubeId) {
+    const frame = document.createElement("iframe");
+    frame.src = `https://www.youtube-nocookie.com/embed/${youTubeId}`;
+    frame.title = `${modalCard.dataset.name} video`;
+    frame.allow = "fullscreen; picture-in-picture; encrypted-media";
+    mediaViewer.appendChild(frame);
+  } else if (isVideoFile(src)) {
+    const video = document.createElement("video");
+    video.src = src;
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.addEventListener("loadedmetadata", () => fitTallMedia(video, video.videoWidth, video.videoHeight));
+    mediaViewer.appendChild(video);
+  } else {
+    // Click an image to open it full size in a new tab
+    const link = document.createElement("a");
+    link.href = src;
+    link.target = "_blank";
+    link.rel = "noopener";
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = `${modalCard.dataset.name}, image ${index + 1} of ${currentMedia.length}`;
+    img.addEventListener("load", () => fitTallMedia(img, img.naturalWidth, img.naturalHeight));
+    link.appendChild(img);
+    mediaViewer.appendChild(link);
+  }
+
+  [...mediaThumbs.children].forEach((thumb, i) => {
+    thumb.classList.toggle("active", i === index);
+    thumb.setAttribute("aria-current", i === index);
+  });
+}
+
+function buildMedia(media) {
+  currentMedia = media;
+  mediaThumbs.innerHTML = "";
+  mediaBox.style.display = media.length ? "grid" : "none";
+  modalCard.classList.toggle("has-media", media.length > 0);
+  if (!media.length) {
+    mediaViewer.innerHTML = "";
+    return;
+  }
+
+  // Small previews to switch between items (only needed with 2 or more)
+  if (media.length > 1) {
+    media.forEach((src, i) => {
+      const thumb = document.createElement("button");
+      thumb.className = "media-thumb";
+      thumb.setAttribute("aria-label", `Show item ${i + 1} of ${media.length}`);
+      const youTubeId = getYouTubeId(src);
+      if (youTubeId) {
+        thumb.classList.add("is-video");
+        thumb.innerHTML = `<img src="https://img.youtube.com/vi/${youTubeId}/mqdefault.jpg" alt="" loading="lazy">`;
+      } else if (isVideoFile(src)) {
+        thumb.classList.add("is-video");
+        const preview = document.createElement("video");
+        preview.src = src + "#t=0.1"; // show a frame instead of a blank box
+        preview.muted = true;
+        preview.preload = "metadata";
+        thumb.appendChild(preview);
+      } else {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        img.loading = "lazy";
+        thumb.appendChild(img);
+      }
+      thumb.addEventListener("click", () => showMedia(i));
+      mediaThumbs.appendChild(thumb);
+    });
+  }
+
+  showMedia(0);
+}
 
 function openProject(index) {
   const p = projects[index];
@@ -316,6 +469,10 @@ function openProject(index) {
   document.getElementById("modal-meta").textContent =
     `${p.type} · ${p.year}` + (p.team ? ` · Team: ${p.team}` : "");
   document.getElementById("modal-desc").textContent = p.description;
+
+  modalCard.dataset.name = p.name;
+  buildMedia(p.media || []);
+  modalCard.scrollTop = 0;
 
   const techBox = document.getElementById("modal-tech");
   techBox.innerHTML = "";
@@ -337,6 +494,7 @@ function openProject(index) {
 function closeProject() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
+  mediaViewer.innerHTML = ""; // stop any video that is still playing
 }
 
 modal.querySelector(".modal-close").addEventListener("click", closeProject);
@@ -345,6 +503,13 @@ modal.addEventListener("click", (e) => {
 });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeProject();
+
+  // Left / right arrow keys flip through a project's images and videos
+  if (!modal.classList.contains("open") || currentMedia.length < 2) return;
+  if (e.target.tagName === "VIDEO") return; // arrow keys skip through the video here
+  const last = currentMedia.length - 1;
+  if (e.key === "ArrowRight") showMedia(currentMediaIndex === last ? 0 : currentMediaIndex + 1);
+  if (e.key === "ArrowLeft") showMedia(currentMediaIndex === 0 ? last : currentMediaIndex - 1);
 });
 
 // ===== Start =====

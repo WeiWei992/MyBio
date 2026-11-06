@@ -91,7 +91,7 @@ const projects = [
     type: "Group Project · Web & Mobile (BMIT2023)",
     team: "TARUMT-Cuties",
     description: "An attendance system built for the Web and Mobile Systems course.",
-    tech: ["HTML"],
+    tech: ["C#", "ASP.NET Core", "SQL Server"],
     link: "", // private repo
     media: ["media/attendify/demo.mp4"],
   },
